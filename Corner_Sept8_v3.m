@@ -137,7 +137,7 @@ Y_t4=Y_t;
 %        Y_r=jj/100;
 
 % line of sight contribution:
-D=sqrt((X_r-X_t)^2+(Y_r-X_t)^2);
+D=sqrt((X_r-X_t)^2+(Y_r-Y_t)^2);
 s_i1=-exp(i*k*D)/(4*pi*D);
 
 % image 2 contribution: it is 'negative' image;
@@ -200,7 +200,7 @@ X_r=X_s1;
 Y_r=Y_s1; % probing field coming from the transmit array; arrives at target;
 
 % line of sight contribution:
-D=sqrt((X_r-X_t)^2+(Y_r-X_t)^2);
+D=sqrt((X_r-X_t)^2+(Y_r-Y_t)^2);
 sTarget_i1=-exp(i*k*D)/(4*pi*D);
 
 % image 2 contribution: it is 'negative' image;
@@ -249,7 +249,7 @@ X_t4=-X_t;
 Y_t4=Y_t;
 
 % line of sight contribution:
-D=sqrt((X_r-X_t)^2+(Y_r-X_t)^2);
+D=sqrt((X_r-X_t)^2+(Y_r-Y_t)^2);
 sReceive_i1=-exp(i*k*D)/(4*pi*D);
 
 % image 2 contribution: it is 'negative' image;
