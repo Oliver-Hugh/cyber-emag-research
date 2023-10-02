@@ -65,16 +65,16 @@ Reverb = 1;
 [receiveCoordinates] = line_array(1.5, 0.5, 30, 1, (pi/2 + pi/6));
 
 % Sets the time scale for the movement of the target
-timeArray = 0:0.001:1;
+timeArray = 0:0.001:10;
 
 % tgtX, tgtY: they indicate the targets' positions. 
 % Also, we have the target strengths tau. 
 
-tgtX = zeros(1, length(timeArray));     % ZS: Update as a function of time
-tgtY = zeros(1, length(timeArray));     % ZS: Update as a function of time
+tgtX = zeros(1, length(timeArray));
+tgtY = zeros(1, length(timeArray));
 
-tgtX(1) = 0.2;      % ZS: Hard-Coded Target Position - To Be Removed
-tgtY(1) = 0.5;      % ZS: Hard-Coded Target Position - To Be Removed
+tgtX = 0.1 .* timeArray;
+tgtY = 0.01 .* timeArray .^ 2;
 tau = 1;
 
 % Sets Range of Frequencies
