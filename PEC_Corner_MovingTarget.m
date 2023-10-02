@@ -115,7 +115,7 @@ for UU = 1:length(transmitCoordinates)
         d_trans_recMirror(2) = sqrt((recX + transX)^2 + (recY + transY)^2);
         d_trans_recMirror(3) = sqrt((recX + transX)^2 + (recY - transY)^2);
 
-        for TT = 1
+        for TT = length(timeArray)
             % Calculates Green's Function for target to determine total field due to scatterer
             d_tgtX = 2 * tgtX(TT);
             d_tgtY = 2 * tgtY(TT);
