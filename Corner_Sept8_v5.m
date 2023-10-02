@@ -105,11 +105,15 @@ epsilon=1e-6;
 %% x_t , y_t : they indicate the targets' positions. 
 %% Also, we have the target strengths tau. 
 
-number_targets=5;
+number_targets=1;
 
-x_t=[0.2,0.5,1,1.1,0.3];
-y_t=[0.8,0.7,1,0.5,1];
-tau=[1,1,1,2,1-i];
+%Array to represent time
+time = linspace(1, 10);
+
+%time-varying distance arrays
+x_t = .1 * time;
+y_t = .01 * time .^ 2;
+tau=1;
 
 % Create the Green's functions, maps from a target to another. 
 
