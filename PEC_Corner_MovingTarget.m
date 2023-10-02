@@ -65,7 +65,7 @@ Reverb = 1;
 [receiveCoordinates] = line_array(1.5, 0.5, 30, 1, (pi/2 + pi/6));
 
 % Sets the time scale for the movement of the target
-timeArray = 0:0.001:10;
+timeArray = 0:0.01:10;
 
 % tgtX, tgtY: they indicate the targets' positions. 
 % Also, we have the target strengths tau. 
@@ -73,8 +73,8 @@ timeArray = 0:0.001:10;
 tgtX = zeros(1, length(timeArray));
 tgtY = zeros(1, length(timeArray));
 
-tgtX = 0.1 .* timeArray;
-tgtY = 0.01 .* timeArray .^ 2;
+tgtX = (0.1 .* timeArray) + 0.1;
+tgtY = (0.01 .* timeArray .^ 2) + 0.1;
 tau = 1;
 
 % Sets Range of Frequencies
@@ -115,7 +115,7 @@ for UU = 1:length(transmitCoordinates)
         d_trans_recMirror(2) = sqrt((recX + transX)^2 + (recY + transY)^2);
         d_trans_recMirror(3) = sqrt((recX + transX)^2 + (recY - transY)^2);
 
-        for TT = length(timeArray)
+        for TT = 1:length(timeArray)
             % Calculates Green's Function for target to determine total field due to scatterer
             d_tgtX = 2 * tgtX(TT);
             d_tgtY = 2 * tgtY(TT);
