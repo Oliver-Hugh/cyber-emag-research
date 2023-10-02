@@ -174,6 +174,7 @@ end
 %% PLOTS
 
 % Plot for schematic of environment
+figure
 plot(receiveCoordinates(:,1), receiveCoordinates(:,2), 'o');
 hold;
 plot(transmitCoordinates(:,1), transmitCoordinates(:,2), '+');
@@ -182,6 +183,23 @@ axis('square')
 axis([0 4 0 4]);
 xlabel('x');
 ylabel('y');
+
+% Plot for K
+figure
+surf(real(K(:,:,1)))
+xlabel('Transmitter #');
+ylabel('Reciever #');
+zlabel('Field');
+title('3D Surface Plot of Re(K) at Time Slice 1');
+    
+    % Set fixed axis limits
+    axis([0 30 0 30 -0.2 0.2])
+% Create a slider
+slider = uicontrol('Style', 'slider', 'Min', 1, 'Max', 1001, ...
+                   'Value', 1, 'SliderStep', [1/1000, 1/1000], ...
+                   'Units', 'normalized', 'Position', [0.1, 0.02, 0.8, 0.05], ...
+                   'Callback', @(src, event) updatePlot(src, event, K));
+
 
 
 
@@ -215,4 +233,17 @@ function [result] = greens (distance, frequency, c)
     % NOTE 1: 'frequency / c' = k = (2 * pi) / lambda
 
     result = -1 / (4 * pi) * 1 / distance * exp(i * (frequency / c) * distance);
+end
+
+% Function to update the plot based on the slider value
+function updatePlot(source, ~, K)
+    timeSlice = round(get(source, 'Value'));
+    surf(real(K(:,:,timeSlice)));
+    xlabel('Transmitter #');
+    ylabel('Reciever #');
+    zlabel('Field');
+    title(['3D Surface Plot of Re(K) at Time Slice ', num2str(timeSlice)]);
+    
+    % Set fixed axis limits
+    axis([0 30 0 30 -0.2 0.2])
 end
