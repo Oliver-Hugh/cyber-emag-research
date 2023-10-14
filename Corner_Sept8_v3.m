@@ -291,10 +291,14 @@ Kv=reshape(K,[],1); % data perturbation, scattered field signals/data.
 
 % Recommended plots: 
 
+figure
+surf(XXreceive(1,:), YYreceive(1,:), real(K));
+
 % Geometry: 
 
+figure
 plot(XXreceive',YYreceive','o');
-hold
+hold;
 plot(XXtransmit,YYtransmit,'+');
 plot(X_s1,Y_s1,'*');
 axis('square')

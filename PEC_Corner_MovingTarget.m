@@ -65,7 +65,7 @@ Reverb = 1;
 [receiveCoordinates] = line_array(1.5, 0.5, 30, 1, (pi/2 + pi/6));
 
 % Sets the time scale for the movement of the target
-timeArray = 0:0.01:10;
+timeArray = 0:0.05:10;
 
 % tgtX, tgtY: they indicate the targets' positions. 
 % Also, we have the target strengths tau. 
@@ -174,31 +174,59 @@ end
 %% PLOTS
 
 % Plot for schematic of environment
-figure
-plot(receiveCoordinates(:,1), receiveCoordinates(:,2), 'o');
-hold;
-plot(transmitCoordinates(:,1), transmitCoordinates(:,2), '+');
-plot(tgtX, tgtY, 'v');
-axis('square')
-axis([0 4 0 4]);
-xlabel('x');
-ylabel('y');
+% figure
+% plot(receiveCoordinates(:,1), receiveCoordinates(:,2), 'o');
+% hold;
+% plot(transmitCoordinates(:,1), transmitCoordinates(:,2), '+');
+% plot(tgtX, tgtY, 'v');
+% axis('square')
+% axis([0 4 0 4]);
+% xlabel('x');
+% ylabel('y');
 
-% Plot for K
-figure
-surf(real(K(:,:,1)))
-xlabel('Transmitter #');
-ylabel('Reciever #');
-zlabel('Field');
-title('3D Surface Plot of Re(K) at Time Slice 1');
+% Plot for Environment and K
+f = figure;
+
+% Maps out X and Y coordinates of K
+recXCoordinates = (receiveCoordinates(:, 1))';
+recYCoordinates = (receiveCoordinates(:, 2))';
+
+% Sets position and size of Figure
+f.Position = [900 500 1300 550];
+
+% Loops through each time step
+for i = 1:length(timeArray)
+    % Plot for schematic of environment
+    subplot(1,2,1);
+    plot(receiveCoordinates(:,1), receiveCoordinates(:,2), 'o');
+    hold on;
+    plot(transmitCoordinates(:,1), transmitCoordinates(:,2), '+');
+    plot(tgtX(i), tgtY(i), 'v');
+    hold off;
+    axis('square');
+    axis([0 4 0 4]);
+    xlabel('X', FontWeight = "bold");
+    ylabel('Y', FontWeight = "bold");
+    title('Environment Schematic');
+    legend("Receiver", "Transmitter", "Target");
     
-    % Set fixed axis limits
-    axis([0 30 0 30 -0.2 0.2])
+    % Plot for real part of K
+    subplot(1,2,2);
+    surf(recXCoordinates, recYCoordinates, real(K(:,:,i)))
+    title(sprintf('3D Surface Plot of Re(K) at %d milliseconds', (i-1) * (timeArray(length(timeArray))-timeArray(1)) / (length(timeArray) - 1)*1000));
+    xlabel('X', FontWeight = "bold");
+    ylabel('Y', FontWeight = "bold");
+    zlabel('SNR', FontWeight = "bold");
+    axis([1 1.5 0.5 1.5 -0.2 0.2]);
+
+    shg;
+end
+    
 % Create a slider
-slider = uicontrol('Style', 'slider', 'Min', 1, 'Max', 1001, ...
-                   'Value', 1, 'SliderStep', [1/1000, 1/1000], ...
-                   'Units', 'normalized', 'Position', [0.1, 0.02, 0.8, 0.05], ...
-                   'Callback', @(src, event) updatePlot(src, event, K));
+% slider = uicontrol('Style', 'slider', 'Min', 1, 'Max', 1001, ...
+%                    'Value', 1, 'SliderStep', [1/1000, 1/1000], ...
+%                    'Units', 'normalized', 'Position', [0.1, 0.02, 0.8, 0.05], ...
+%                    'Callback', @(src, event) updatePlot(src, event, K));
 
 
 
