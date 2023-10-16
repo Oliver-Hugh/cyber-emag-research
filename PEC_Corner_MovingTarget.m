@@ -65,7 +65,7 @@ Reverb = 1;
 [receiveCoordinates] = line_array(1.5, 0.5, 30, 1, (pi/2 + pi/6));
 
 % Sets the time scale for the movement of the target
-timeArray = 0:0.05:10;
+timeArray = 0:0.001:10;
 
 % tgtX, tgtY: they indicate the targets' positions. 
 % Also, we have the target strengths tau. 
@@ -115,6 +115,13 @@ for UU = 1:length(transmitCoordinates)
         d_trans_recMirror(2) = sqrt((recX + transX)^2 + (recY + transY)^2);
         d_trans_recMirror(3) = sqrt((recX + transX)^2 + (recY - transY)^2);
 
+        % Background field transmitter to receiver
+        U_bknd_comps(1) = greens(d_trans_rec, w, c);
+        U_bknd_comps(2) = -1 * greens(d_trans_recMirror(1), w, c);
+        U_bknd_comps(3) = greens(d_trans_recMirror(2), w, c);
+        U_bknd_comps(4) = -1 * greens(d_trans_recMirror(3), w, c);
+        U_bknd(UU, VV) = U_bknd_comps(1) + Reverb*(U_bknd_comps(2) + U_bknd_comps(3) + U_bknd_comps(4));    
+        
         for TT = 1:length(timeArray)
             % Calculates Green's Function for target to determine total field due to scatterer
             d_tgtX = 2 * tgtX(TT);
@@ -138,14 +145,6 @@ for UU = 1:length(transmitCoordinates)
             d_tgt_recMirror(1) = sqrt((recX - tgtX(TT))^2 + (recY + tgtY(TT))^2);
             d_tgt_recMirror(2) = sqrt((recX + tgtX(TT))^2 + (recY + tgtY(TT))^2);
             d_tgt_recMirror(3) = sqrt((recX + tgtX(TT))^2 + (recY - tgtY(TT))^2);    
-
-            % Background field transmitter to receiver
-            U_bknd_comps(1) = greens(d_trans_rec, w, c);
-            U_bknd_comps(2) = -1 * greens(d_trans_recMirror(1), w, c);
-            U_bknd_comps(3) = greens(d_trans_recMirror(2), w, c);
-            U_bknd_comps(4) = -1 * greens(d_trans_recMirror(3), w, c);
-            U_bknd(UU, VV, TT) = U_bknd_comps(1) + Reverb*(U_bknd_comps(2) + U_bknd_comps(3) + U_bknd_comps(4));    
-
             % Incident field transmitter to target, with calculation of
             % total scatterer field
             U_inc_comps(1) = greens(d_trans_tgt, w, c);
@@ -195,38 +194,38 @@ recYCoordinates = (receiveCoordinates(:, 2))';
 f.Position = [900 500 1300 550];
 
 % Loops through each time step
-for i = 1:length(timeArray)
-    % Plot for schematic of environment
-    subplot(1,2,1);
-    plot(receiveCoordinates(:,1), receiveCoordinates(:,2), 'o');
-    hold on;
-    plot(transmitCoordinates(:,1), transmitCoordinates(:,2), '+');
-    plot(tgtX(i), tgtY(i), 'v');
-    hold off;
-    axis('square');
-    axis([0 4 0 4]);
-    xlabel('X', FontWeight = "bold");
-    ylabel('Y', FontWeight = "bold");
-    title('Environment Schematic');
-    legend("Receiver", "Transmitter", "Target");
-    
-    % Plot for real part of K
-    subplot(1,2,2);
-    surf(recXCoordinates, recYCoordinates, real(K(:,:,i)))
-    title(sprintf('3D Surface Plot of Re(K) at %d milliseconds', (i-1) * (timeArray(length(timeArray))-timeArray(1)) / (length(timeArray) - 1)*1000));
-    xlabel('X', FontWeight = "bold");
-    ylabel('Y', FontWeight = "bold");
-    zlabel('SNR', FontWeight = "bold");
-    axis([1 1.5 0.5 1.5 -0.2 0.2]);
+% for i = 1:length(timeArray)
 
-    shg;
-end
+% Plot for schematic of environment at t = 0
+subplot(1,2,1);
+plot(receiveCoordinates(:, 1), receiveCoordinates(:, 2), 'o');
+hold on;
+plot(transmitCoordinates(:, 1), transmitCoordinates(:, 2), '+');
+plot(tgtX(1), tgtY(1), 'v');
+hold off;
+axis('square');
+axis([0 4 0 4]);
+xlabel('X', FontWeight = "bold");
+ylabel('Y', FontWeight = "bold");
+title('Environment Schematic');
+legend("Receiver", "Transmitter", "Target");
+
+% Plot for real part of K
+subplot(1,2,2);
+surf(recXCoordinates, recYCoordinates, real(K(:,:,1)))
+title(sprintf('3D Surface Plot of Re(K) at %d milliseconds', (1-1) * (timeArray(length(timeArray))-timeArray(1)) / (length(timeArray) - 1)*1000));
+xlabel('X', FontWeight = "bold");
+ylabel('Y', FontWeight = "bold");
+zlabel('SNR', FontWeight = "bold");
+axis([1 1.5 0.5 1.5 -0.2 0.2]);
+
+% end
     
 % Create a slider
-% slider = uicontrol('Style', 'slider', 'Min', 1, 'Max', 1001, ...
-%                    'Value', 1, 'SliderStep', [1/1000, 1/1000], ...
-%                    'Units', 'normalized', 'Position', [0.1, 0.02, 0.8, 0.05], ...
-%                    'Callback', @(src, event) updatePlot(src, event, K));
+slider = uicontrol('Style', 'slider', 'Min', 1, 'Max', length(timeArray), ...
+                   'Value', 1, 'SliderStep', [1/(length(timeArray)-1), 1/(length(timeArray)-1)], ...
+                   'Units', 'normalized', 'Position', [0.1, 0.02, 0.8, 0.05], ...
+                   'Callback', @(src, event) updatePlot(src, event, K, receiveCoordinates, transmitCoordinates, tgtX, tgtY, timeArray));
 
 
 
@@ -260,18 +259,44 @@ function [result] = greens (distance, frequency, c)
     % Formula for Green's Function
     % NOTE 1: 'frequency / c' = k = (2 * pi) / lambda
 
-    result = -1 / (4 * pi) * 1 / distance * exp(i * (frequency / c) * distance);
+    result = -1 / (4 * pi) * 1 / distance * exp(1i * (frequency / c) * distance);
 end
 
+
 % Function to update the plot based on the slider value
-function updatePlot(source, ~, K)
+function updatePlot(source, ~, K, receiveCoordinates, transmitCoordinates, tgtX, tgtY, timeArray)
     timeSlice = round(get(source, 'Value'));
-    surf(real(K(:,:,timeSlice)));
-    xlabel('Transmitter #');
-    ylabel('Reciever #');
-    zlabel('Field');
-    title(['3D Surface Plot of Re(K) at Time Slice ', num2str(timeSlice)]);
+    % surf(real(K(:,:,timeSlice)));
+    % xlabel('Transmitter #');
+    % ylabel('Reciever #');
+    % zlabel('Field');
+    % title(['3D Surface Plot of Re(K) at Time Slice ', num2str(timeSlice)]);
     
     % Set fixed axis limits
-    axis([0 30 0 30 -0.2 0.2])
+    % axis([0 30 0 30 -0.2 0.2])
+
+    % Plot for schematic of environment
+    subplot(1,2,1);
+    plot(receiveCoordinates(:, 1), receiveCoordinates(:, 2), 'o');
+    hold on;
+    plot(transmitCoordinates(:, 1), transmitCoordinates(:, 2), '+');
+    plot(tgtX(timeSlice), tgtY(timeSlice), 'v');
+    hold off;
+    axis('square');
+    axis([0 4 0 4]);
+    xlabel('X', FontWeight = "bold");
+    ylabel('Y', FontWeight = "bold");
+    title('Environment Schematic');
+    legend("Receiver", "Transmitter", "Target");
+    
+    % Plot for real part of K
+    subplot(1,2,2);
+    surf(receiveCoordinates(:, 1), receiveCoordinates(:, 2), real(K(:,:,timeSlice)))
+    title(sprintf('3D Surface Plot of Re(K) at %d milliseconds', (timeSlice-1) * (timeArray(length(timeArray))-timeArray(1)) / (length(timeArray) - 1)*1000));
+    xlabel('X', FontWeight = "bold");
+    ylabel('Y', FontWeight = "bold");
+    zlabel('SNR', FontWeight = "bold");
+    axis([1 1.5 0.5 1.5 -0.2 0.2]);
+
+
 end
