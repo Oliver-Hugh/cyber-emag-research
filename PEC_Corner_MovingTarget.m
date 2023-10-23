@@ -15,17 +15,17 @@ clc
 % R = receiver
 % T = transmitter
 %        |
-%        |       R [RECEIVE ARRAY]
-%        |      R
-%        P     R
-%        E    R
-%        C   R
+%        |       T [TRANSMIT ARRAY]
+%        |      T
+%        P     T
+%        E    T
+%        C   T
 %        | 
-%        |              T
-% Mirror3|               T
-%        |                T     [TRANSMIT ARRAY]
-%        |  *              T
-%        |*                 T
+%        |              R
+% Mirror3|               R
+%        |                R     [RECEIVE ARRAY]
+%        |  *              R
+%        |*                 R
 %        |     *
 %        |  [MULTIPLE TARGET POSITIONS AS A FUNCTION OF TIME]
 %        |         *
